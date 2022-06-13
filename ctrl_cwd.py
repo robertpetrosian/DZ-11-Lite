@@ -78,7 +78,14 @@ def cp_file():
     else:
         print(f'Файл {ret} успешно скпирован')
 def show_folders():
-    return
+    lst_matches = os.listdir()
+    for item in lst_matches:
+        counter = 0
+        if os.path.isdir(item):
+            counter+=1
+            print(item)
+    if counter == 0:
+        print(f'Каталоги отсутствуют')
 
 def show_files():
     return
