@@ -88,7 +88,15 @@ def show_folders():
         print(f'Каталоги отсутствуют')
 
 def show_files():
-    return
+    lst_matches = os.listdir()
+    for item in lst_matches:
+        counter = 0
+        if not os.path.isdir(item):
+            counter += 1
+            print(item)
+
+    if counter == 0:
+        print(f'Файлы отсутствуют')
 
 
 def submenu_1():
