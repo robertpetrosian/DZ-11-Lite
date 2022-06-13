@@ -1,4 +1,6 @@
 import os
+import shutil
+
 def show_cwd():
     '''
     печать содержимого текущего каталога
@@ -66,13 +68,15 @@ def del_file():
         else:
             print(f'Файл {name_of_match} удален')
 
-
-    os.removedirs()
-    return
-
 def cp_file():
-    return
-
+    name_of_file_from = input('Введите имя исходного файла')
+    name_of_file_to = input('Введите имя целевого файла или каталога')
+    try:
+        ret = shutil.copy(name_of_file_from, name_of_file_to)
+    except OSError:
+        print(f'Файл {name_of_file_from} не может быть скопирован. Проверьте наличие и права доступа целевого объекта')
+    else:
+        print(f'Файл {ret} успешно скпирован')
 def show_folders():
     return
 
