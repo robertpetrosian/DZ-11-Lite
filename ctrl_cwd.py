@@ -5,8 +5,15 @@ def show_cwd():
     '''
     печать содержимого текущего каталога
     '''
-
-    print(os.listdir() )
+    lst_out = []
+    for item in os.listdir():
+        if os.path.isdir(item):
+            lst_out.append(f'Dir {item}')
+        else:
+            lst_out.append(f'File {item}')
+    lst_out.sort()
+    for item in lst_out:
+        print(item)
 
 def cd_cwd():
     '''
@@ -28,7 +35,7 @@ def cr_file():
     создание файла или каталога
     '''
 
-    what_want = input('Введите 1 - создать файл, 2 - создать каталог, любой символ - отказ')
+    what_want = input('Введите 1 - создать файл, 2 - создать каталог, любой символ - отказ ')
     if what_want == '1':
         new_file = input('Введите имя нового файла: ')
         try:
@@ -50,7 +57,7 @@ def cr_file():
             print(f'Новый каталог {new_cwd}')
 
 def del_file():
-    name_of_match = input('Введите имя файла или папки')
+    name_of_match = input('Введите имя файла или папки ')
     if os.path.isdir(name_of_match) :
         try:
             os.rmdir(name_of_match)
@@ -69,8 +76,8 @@ def del_file():
             print(f'Файл {name_of_match} удален')
 
 def cp_file():
-    name_of_file_from = input('Введите имя исходного файла')
-    name_of_file_to = input('Введите имя целевого файла или каталога')
+    name_of_file_from = input('Введите имя исходного файла ')
+    name_of_file_to = input('Введите имя целевого файла или каталога ')
     try:
         ret = shutil.copy(name_of_file_from, name_of_file_to)
     except OSError:
@@ -79,18 +86,18 @@ def cp_file():
         print(f'Файл {ret} успешно скпирован')
 def show_folders():
     lst_matches = os.listdir()
+    counter = 0
     for item in lst_matches:
-        counter = 0
         if os.path.isdir(item):
-            counter+=1
+            counter += 1
             print(item)
     if counter == 0:
         print(f'Каталоги отсутствуют')
 
 def show_files():
     lst_matches = os.listdir()
+    counter = 0
     for item in lst_matches:
-        counter = 0
         if not os.path.isdir(item):
             counter += 1
             print(item)
@@ -104,20 +111,19 @@ def submenu_1():
     ф-я высвечивает подпункты первого меню
     запрашивает и возвращает выбранный пункт подменю
     '''
-    ret = '0'
-    while ret == '0':
+    while True :
         print('Работа с файлами и папками: ')
         print(' 1. Просмотр содержимого рабочей директории\n',
               '2. Смена рабочей директории\n',
-              '3. Создать папку\n',
+              '3. Создать файл или папку\n',
               '4. Удалить (файл/папку)\n',
               '5. Копировать (файл/папку)\n',
               '6. Посмотреть только папки\n',
               '7. Посмотреть только файлы\n',
               '8. Выход в главное меню\n')
-        ret = input('Выберите пункт меню:')
+        ret = input('Выберите пункт меню: ')
         if len(ret) != 1 or ret not in '12345678':
-            ret='0'
+            continue
         elif ret=='1':
             show_cwd()
         elif ret == '2':
