@@ -14,6 +14,7 @@ def show_cwd():
     lst_out.sort()
     for item in lst_out:
         print(item)
+    return lst_out
 
 def cd_cwd():
     '''
@@ -25,10 +26,14 @@ def cd_cwd():
         os.chdir(new_cwd)
     except NotADirectoryError :
         print(f'{new_cwd} не является каталогом')
+        new_cwd = ''
     except PermissionError :
         print(f'{new_cwd} не доступен для пользователя')
+        new_cwd = ''
     else:
         print(f'Новый текущий каталог {new_cwd}')
+
+    return new_cwd
 
 def cr_file():
     '''
@@ -43,18 +48,27 @@ def cr_file():
             f.close()
         except OSError:
             print(f'Файл {new_file} не может быть создан')
+            new_file =''
         else:
             print(f'Файл {new_file} создан')
+        finally:
+            ret = new_file
     elif what_want == '2':
         new_cwd = input('Введите имя нового каталога: ')
         try:
             os.mkdir(new_cwd)
         except FileExistsError:
             print(f'{new_cwd} уже существует')
+            new_cwd =''
         except FileNotFoundError:
             print(f'{new_cwd} не имеет родительского каталога')
+            new_cwd = ''
         else:
             print(f'Новый каталог {new_cwd}')
+        finally:
+            ret = new_cwd
+
+    return ret
 
 def del_file():
     name_of_match = input('Введите имя файла или папки ')
@@ -63,8 +77,10 @@ def del_file():
             os.rmdir(name_of_match)
         except FileNotFoundError:
             print(f'Каталог {name_of_match} не существует')
+            name_of_match = ''
         except OSError:
             print(f'Каталог {name_of_match} не пустой')
+            name_of_match = ''
         else:
             print(f'Каталог {name_of_match} удален')
     else:
@@ -72,8 +88,11 @@ def del_file():
             os.remove(name_of_match)
         except FileNotFoundError:
             print(f'Файл {name_of_match} не существует')
+            name_of_match = ''
         else:
             print(f'Файл {name_of_match} удален')
+
+    return name_of_match
 
 def cp_file():
     name_of_file_from = input('Введите имя исходного файла ')
@@ -82,8 +101,11 @@ def cp_file():
         ret = shutil.copy(name_of_file_from, name_of_file_to)
     except OSError:
         print(f'Файл {name_of_file_from} не может быть скопирован. Проверьте наличие и права доступа целевого объекта')
+        ret = ''
     else:
         print(f'Файл {ret} успешно скпирован')
+
+
 def show_folders():
     lst_matches = os.listdir()
     counter = 0
@@ -91,8 +113,13 @@ def show_folders():
         if os.path.isdir(item):
             counter += 1
             print(item)
+        else:
+            lst_matches.remove(item)
+
     if counter == 0:
         print(f'Каталоги отсутствуют')
+
+    return lst_matches
 
 def show_files():
     lst_matches = os.listdir()
@@ -101,10 +128,13 @@ def show_files():
         if not os.path.isdir(item):
             counter += 1
             print(item)
+        else:
+            lst_matches.remove(item)
 
     if counter == 0:
         print(f'Файлы отсутствуют')
 
+    return lst_matches
 
 def submenu_1():
     '''
