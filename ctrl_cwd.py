@@ -2,139 +2,88 @@ import os
 import shutil
 
 def show_cwd():
-    '''
-    печать содержимого текущего каталога
-    '''
-    lst_out = []
-    for item in os.listdir():
-        if os.path.isdir(item):
-            lst_out.append(f'Dir {item}')
-        else:
-            lst_out.append(f'File {item}')
-    lst_out.sort()
-    for item in lst_out:
-        print(item)
-    return lst_out
+  '''получить содержимого текущего каталога'''
+  return os.listdir()
 
-def cd_cwd():
-    '''
-    смена текущего каталога
-    '''
-
-    new_cwd = input('Введите целевой каталог: ')
+def cd_cwd(new_cwd):
+    ' смена текущего каталога '
+    ret =''
     try:
         os.chdir(new_cwd)
     except NotADirectoryError :
-        print(f'{new_cwd} не является каталогом')
-        new_cwd = ''
+        ret = f'{new_cwd} не является каталогом'
     except PermissionError :
-        print(f'{new_cwd} не доступен для пользователя')
-        new_cwd = ''
-    else:
-        print(f'Новый текущий каталог {new_cwd}')
-
-    return new_cwd
-
-def cr_file():
-    '''
-    создание файла или каталога
-    '''
-
-    what_want = input('Введите 1 - создать файл, 2 - создать каталог, любой символ - отказ ')
-    if what_want == '1':
-        new_file = input('Введите имя нового файла: ')
-        try:
-            f = open(new_file, 'w')
-            f.close()
-        except OSError:
-            print(f'Файл {new_file} не может быть создан')
-            new_file =''
-        else:
-            print(f'Файл {new_file} создан')
-        finally:
-            ret = new_file
-    elif what_want == '2':
-        new_cwd = input('Введите имя нового каталога: ')
-        try:
-            os.mkdir(new_cwd)
-        except FileExistsError:
-            print(f'{new_cwd} уже существует')
-            new_cwd =''
-        except FileNotFoundError:
-            print(f'{new_cwd} не имеет родительского каталога')
-            new_cwd = ''
-        else:
-            print(f'Новый каталог {new_cwd}')
-        finally:
-            ret = new_cwd
-
+        ret = f'{new_cwd} не доступен для пользователя'
+    except FileNotFoundError :
+        ret = f'{new_cwd} не существует'
     return ret
 
-def del_file():
-    name_of_match = input('Введите имя файла или папки ')
+def cr_file(new_file):
+    'создание файла'
+    ret = ''
+    try:
+        f = open(new_file, 'w')
+        f.close()
+    except OSError:
+        ret = f'Файл {new_file} не может быть создан'
+    return ret
+
+def cr_folder(new_folder):
+    ' создание каталога '
+    ret = ''
+    try:
+        os.mkdir(new_folder)
+    except FileExistsError:
+        ret = f'{new_folder} уже существует'
+    except FileNotFoundError:
+        ret = f'{new_folder} не имеет родительского каталога'
+    return ret
+
+def del_file(name_of_match):
+    ret = ''
     if os.path.isdir(name_of_match) :
         try:
             os.rmdir(name_of_match)
         except FileNotFoundError:
-            print(f'Каталог {name_of_match} не существует')
-            name_of_match = ''
+            ret = f'Каталог {name_of_match} не существует'
         except OSError:
-            print(f'Каталог {name_of_match} не пустой')
-            name_of_match = ''
-        else:
-            print(f'Каталог {name_of_match} удален')
-    else:
+            ret = f'Каталог {name_of_match} не пустой'
+    elif os.path.isfile(name_of_match):
         try:
             os.remove(name_of_match)
         except FileNotFoundError:
-            print(f'Файл {name_of_match} не существует')
-            name_of_match = ''
-        else:
-            print(f'Файл {name_of_match} удален')
-
-    return name_of_match
-
-def cp_file():
-    name_of_file_from = input('Введите имя исходного файла ')
-    name_of_file_to = input('Введите имя целевого файла или каталога ')
-    try:
-        ret = shutil.copy(name_of_file_from, name_of_file_to)
-    except OSError:
-        print(f'Файл {name_of_file_from} не может быть скопирован. Проверьте наличие и права доступа целевого объекта')
-        ret = ''
+            ret = f'Файл {name_of_match} не существует'
     else:
-        print(f'Файл {ret} успешно скпирован')
+        ret = f'{name_of_match} не является Файлом или каталогом'
+    return ret
 
+
+def cp_file(name_of_file_from, name_of_file_to) :
+    ret = ''
+    try:
+        shutil.copy(name_of_file_from, name_of_file_to)
+    except OSError :
+        ret = f'Файл {name_of_file_from} не скопирован. Проверьте наличие и права доступа целевого объекта'
+
+    return ret
 
 def show_folders():
+    lst_out =[]
     lst_matches = os.listdir()
-    counter = 0
     for item in lst_matches:
         if os.path.isdir(item):
-            counter += 1
-            print(item)
-        else:
-            lst_matches.remove(item)
-
-    if counter == 0:
-        print(f'Каталоги отсутствуют')
-
-    return lst_matches
+            lst_out.append(item)
+    lst_out.sort()
+    return lst_out
 
 def show_files():
+    lst_out =[]
     lst_matches = os.listdir()
-    counter = 0
     for item in lst_matches:
-        if not os.path.isdir(item):
-            counter += 1
-            print(item)
-        else:
-            lst_matches.remove(item)
-
-    if counter == 0:
-        print(f'Файлы отсутствуют')
-
-    return lst_matches
+        if os.path.isfile(item):
+            lst_out.append(item)
+    lst_out.sort()
+    return lst_out
 
 def submenu_1():
     '''
@@ -145,29 +94,86 @@ def submenu_1():
         print('Работа с файлами и папками: ')
         print(' 1. Просмотр содержимого рабочей директории\n',
               '2. Смена рабочей директории\n',
-              '3. Создать файл или папку\n',
-              '4. Удалить (файл/папку)\n',
-              '5. Копировать (файл/папку)\n',
-              '6. Посмотреть только папки\n',
-              '7. Посмотреть только файлы\n',
-              '8. Выход в главное меню\n')
+              '3. Создать файл\n',
+              '4. Создать каталог\n',
+              '5. Удалить (файл/каталог)\n',
+              '6. Копировать (файл/каталог)\n',
+              '7. Посмотреть только каталоги\n',
+              '8. Посмотреть только файлы\n',
+              '9. Выход в главное меню\n')
         ret = input('Выберите пункт меню: ')
-        if len(ret) != 1 or ret not in '12345678':
+        if len(ret) != 1 or ret not in '123456789':
             continue
-        elif ret=='1':
-            show_cwd()
+        elif ret =='1':
+            print(f'Рабочая директория {os.getcwd()}')
+            lst = show_cwd()
+            lst_out=[]
+            for item in lst:
+                if os.path.isdir(item):
+                    lst_out.append(f'Dir {item}')
+                else:
+                    lst_out.append(f'File {item}')
+            lst_out.sort()
+            for item in lst_out:
+                print(item)
         elif ret == '2':
-            cd_cwd()
+            new_cwd = input('Введите новый рабочий каталог: ')
+            error = cd_cwd(new_cwd)
+            if error == '':
+                print(f'Текущий каталог {new_cwd}')
+            else:
+                print(f'Текущий каталог не изменён. Ошибка {error}')
+
         elif ret == '3':
-            cr_file()
+            new_file = input('Введите имя нового файла: ')
+            error = cr_file(new_file)
+            if error == '':
+                print(f'Файл {new_file} создан')
+            else:
+                print(f'Ошибка {error}. Файл {new_file} не создан')
+
         elif ret == '4':
-            del_file()
+            new_folder = input('Введите имя нового каталога: ')
+            error = cr_folder(new_folder)
+            if error == '':
+                print(f'каталог {new_folder} создан')
+            else:
+                print(f'Ошибка {error}. каталог {new_folder} не создан')
+
         elif ret == '5':
-            cp_file()
+            name_of_match = input('Введите имя файла или папки ')
+            error = del_file(name_of_match)
+            if error == '':
+                print(f'Файл / каталог {name_of_match} удален')
+            else:
+                print(f'Ошибка {error} каталог {name_of_match} не удален')
+
         elif ret == '6':
-            show_folders()
+            name_of_file_from = input('Введите имя исходного файла ')
+            name_of_file_to = input('Введите имя целевого файла или каталога ')
+            error = cp_file(name_of_file_from , name_of_file_to )
+            if error == '':
+                print(f'Файл / каталог {name_of_file_from} скопирован в {name_of_file_to}')
+            else:
+                print(f'Ошибка {error}. Файл {name_of_file_from} не скопирован')
+
         elif ret == '7':
-            show_files()
+            lst = show_folders()
+            if len(lst) == 0:
+                print('Каталогов не существует')
+            else:
+                for item in lst:
+                    print(item)
+        elif ret == '8':
+            lst = show_files()
+            if len(lst) == 0 :
+                print('Файлов не существует')
+            else:
+                for item in lst:
+                    print(item)
         else:
             break
 
+
+if __name__ == '__main__' :
+    submenu_1()
