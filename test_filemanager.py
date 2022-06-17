@@ -61,7 +61,7 @@ def test_show_folders():
     for item in ctrl_cwd.show_folders():
         assert os.path.isdir(item)
 
-def test_show_felse():
+def test_show_files():
     for item in ctrl_cwd.show_files():
         assert os.path.isfile(item)
 
