@@ -65,3 +65,5 @@ def test_show_files():
     for item in ctrl_cwd.show_files():
         assert os.path.isfile(item)
 
+if __name__ == '__main__':
+    do test_show_files()
