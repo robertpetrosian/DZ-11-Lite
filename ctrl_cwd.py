@@ -1,5 +1,21 @@
+import json
 import os
 import shutil
+
+def save_cwd_to_file():
+    lst = show_cwd()
+    lst_out_dir = []
+    lst_out_file = []
+    for item in lst:
+        if os.path.isdir(item):
+            lst_out_dir.append(item)
+        elif os.path.isfile(item):
+            lst_out_file.append(item)
+    str_files='Files: '+ ','.join(lst_out_file)
+    str_dirs = 'Dirs: ' + ','.join(lst_out_dir)
+    with open('listdir.txt','w') as f:
+        f.write(str_files+'\n')
+        f.write(str_dirs)
 
 def show_cwd():
   '''получить содержимого текущего каталога'''
@@ -92,17 +108,19 @@ def submenu_1():
     '''
     while True :
         print('Работа с файлами и папками: ')
-        print(' 1. Просмотр содержимого рабочей директории\n',
-              '2. Смена рабочей директории\n',
-              '3. Создать файл\n',
-              '4. Создать каталог\n',
-              '5. Удалить (файл/каталог)\n',
-              '6. Копировать (файл/каталог)\n',
-              '7. Посмотреть только каталоги\n',
-              '8. Посмотреть только файлы\n',
-              '9. Выход в главное меню\n')
+        print('',
+              '1. Просмотр содержимого рабочей директории\n',
+              '2. Сохранить содержимое рабочей директории в файл\n',
+              '3. Смена рабочей директории\n',
+              '4. Создать файл\n',
+              '5. Создать каталог\n',
+              '6. Удалить (файл/каталог)\n',
+              '7. Копировать (файл/каталог)\n',
+              '8. Посмотреть только каталоги\n',
+              '9. Посмотреть только файлы\n',
+              '0. Выход в главное меню\n')
         ret = input('Выберите пункт меню: ')
-        if len(ret) != 1 or ret not in '123456789':
+        if len(ret) != 1 or ret not in '1234567890':
             continue
         elif ret =='1':
             print(f'Рабочая директория {os.getcwd()}')
@@ -117,6 +135,8 @@ def submenu_1():
             for item in lst_out:
                 print(item)
         elif ret == '2':
+            save_cwd_to_file()
+        elif ret == '3':
             new_cwd = input('Введите новый рабочий каталог: ')
             error = cd_cwd(new_cwd)
             if error == '':
@@ -124,7 +144,7 @@ def submenu_1():
             else:
                 print(f'Текущий каталог не изменён. Ошибка {error}')
 
-        elif ret == '3':
+        elif ret == '4':
             new_file = input('Введите имя нового файла: ')
             error = cr_file(new_file)
             if error == '':
@@ -132,7 +152,7 @@ def submenu_1():
             else:
                 print(f'Ошибка {error}. Файл {new_file} не создан')
 
-        elif ret == '4':
+        elif ret == '5':
             new_folder = input('Введите имя нового каталога: ')
             error = cr_folder(new_folder)
             if error == '':
@@ -140,7 +160,7 @@ def submenu_1():
             else:
                 print(f'Ошибка {error}. каталог {new_folder} не создан')
 
-        elif ret == '5':
+        elif ret == '6':
             name_of_match = input('Введите имя файла или папки ')
             error = del_file(name_of_match)
             if error == '':
@@ -148,7 +168,7 @@ def submenu_1():
             else:
                 print(f'Ошибка {error} каталог {name_of_match} не удален')
 
-        elif ret == '6':
+        elif ret == '7':
             name_of_file_from = input('Введите имя исходного файла ')
             name_of_file_to = input('Введите имя целевого файла или каталога ')
             error = cp_file(name_of_file_from , name_of_file_to )
@@ -157,14 +177,14 @@ def submenu_1():
             else:
                 print(f'Ошибка {error}. Файл {name_of_file_from} не скопирован')
 
-        elif ret == '7':
+        elif ret == '8':
             lst = show_folders()
             if len(lst) == 0:
                 print('Каталогов не существует')
             else:
                 for item in lst:
                     print(item)
-        elif ret == '8':
+        elif ret == '9':
             lst = show_files()
             if len(lst) == 0 :
                 print('Файлов не существует')
