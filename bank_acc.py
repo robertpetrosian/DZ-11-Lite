@@ -1,103 +1,112 @@
-"""
-МОДУЛЬ 3
-Программа "Личный счет"
-Описание работы программы:
-Пользователь запускает программу у него на счету 0
-Программа предлагает следующие варианты действий
-1. пополнить счет
-2. покупка
-3. история покупок
-4. выход
+import json
+import os
 
-1. пополнение счета
-при выборе этого пункта пользователю предлагается ввести сумму на сколько пополнить счет
-после того как пользователь вводит сумму она добавляется к счету
-снова попадаем в основное меню
+'''
+history - история счета - 2-мерный список 
+строка - одна операция , которая есть список:
+номер, сумма, наименование 
+'''
 
-2. покупка
-при выборе этого пункта пользователю предлагается ввести сумму покупки
-если она больше количества денег на счете, то сообщаем что денег не хватает и переходим в основное меню
-если денег достаточно предлагаем пользователю ввести название покупки, например (еда)
-снимаем деньги со счета
-сохраняем покупку в историю
-выходим в основное меню
-
-3. история покупок
-выводим историю покупок пользователя (название и сумму)
-возвращаемся в основное меню
-
-4. выход
-выход из программы
-
-При выполнении задания можно пользоваться любыми средствами
-
-Для реализации основного меню можно использовать пример ниже или написать свой
-"""
-
-hist_name=[]
-hist_sum =[]
-
-def acc_sum():
+def write_hist_acc(f_hist, history):
     '''
-    ф-я возвращает остаток на счету
+    аргумент: имя файла
+    файл переписываем , записываем историю
     '''
-    itog=0
-    for i in hist_sum:
-        itog+=i
+    with open(f_hist, 'w') as f:
+        json.dump(history,f)
 
-    return itog
+def read_hist_acc(f_hist):
+    '''
+    аргумент: имя файла
+    если файла нет создаем и пишем открытие счета , сумма=0
+    если есть считываем
+    возвращает историю счета
+    '''
 
-def acc_add():
-    # пополнение счета
-    sum_add = int(input('Введите сумму пополнения счета: '))
-    if sum_add<=0:
-        print('Неверная сумма, повторите операцию')
-    else:
-        hist_sum.append(sum_add)
-        hist_name.append('Пополнение')
+    if not os.path.isfile(f_hist):
+        with open(f_hist,'w') as f:
+            json.dump([[0,0,'открытие счета']],f)
 
-def acc_sub():
-    # покупка
-    ostatok=acc_sum()
-    if ostatok<=0:
-        print('На счету нет средств')
-        return
-    name_sub = input('Введите назаание покупки : ')
-    sum_sub = int(input('Введите сумму покупки: '))
-    if ostatok - sum_sub < 0:
-        print('Неверная сумма, повторите операцию')
-    else:
-        hist_sum.append(- sum_sub)
-        hist_name.append(name_sub)
+    with open(f_hist) as f:
+        result = json.load(f)
 
-def acc_hist():
-    if len(hist_name)==0:
-        print('У счета нет истории')
-        return
-    for i in range(len(hist_name)) :
-        print(f'{hist_name[i]} {hist_sum[i]}')
+    return result
+
+def get_max_nom_oper(history):
+    '''
+    получить максимальный номер операции
+    '''
+    nom_oper=[]
+    result = 0
+    for i in range(len(history)):
+        nom_oper.append(history[i][0])
+    if len(history) != 0:
+        result = max(nom_oper)
+    return result
+
+def get_sum_summa_oper(history):
+    '''
+    возвращает сумму операций истории
+    '''
+    result=0
+    for item in history:
+        result += item[1]
+    return result
 
 def ctrl_acc():
     '''
     управление счетом
-    :return:
     '''
+
     while True:
         print('*'*20) # псевдо-очистка окна вывода
-        print(f'На счету {acc_sum()} руб')
+        print(f'На счету {get_sum_summa_oper(history)} руб')
         print('1. пополнение счета')
         print('2. покупка')
-        print('3. история покупок')
+        print('3. история счета')
         print('4. выход')
 
         choice = input('Выберите пункт меню ')
         if choice == '1':
-            acc_add()
+            # пополнение счета
+            sum_add = int(input('Введите сумму пополнения счета: '))
+            if sum_add <= 0:
+                print('Неверная сумма, повторите операцию')
+            else:
+                history.append([get_max_nom_oper(history)+1 ,
+                                sum_add ,
+                                'пополнение счета'])
         elif choice == '2':
-            acc_sub()
+            # покупка
+            ostatok = get_sum_summa_oper(history)
+            if ostatok <= 0:
+                print('На счету нет средств')
+            else:
+                name_sub = input('Введите назаание покупки : ')
+                sum_sub = int(input('Введите сумму покупки: '))
+                if ostatok - sum_sub < 0:
+                    print('Неверная сумма, повторите операцию')
+                else:
+                    history.append([get_max_nom_oper(history)+1,
+                                    - sum_sub,
+                                    name_sub])
         elif choice == '3':
-            acc_hist()
+            if get_max_nom_oper(history) == 0:
+                print('У счета нет истории')
+
+            fmt_string='{:^10} {:^10} {:^30}'
+            print(fmt_string.format('Номер','Сумма','Наименование'))
+            for item in history:
+                print(fmt_string.format(item[0],item[1], item[2]))
+
         elif choice == '4':
+            write_hist_acc(f_hist, history)
             break
         else:
             print('Неверный пункт меню')
+
+
+if __name__ == "__main__":
+    f_hist = "hist_acc.json"
+    history = read_hist_acc(f_hist)
+    ctrl_acc()

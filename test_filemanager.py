@@ -66,4 +66,4 @@ def test_show_files():
         assert os.path.isfile(item)
 
 if __name__ == '__main__':
-    do test_show_files()
+    test_show_files()
