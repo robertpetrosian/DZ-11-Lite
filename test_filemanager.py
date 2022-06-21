@@ -3,6 +3,7 @@ import os
 
 import ctrl_cwd
 
+
 def test_show_cwd():
     assert type(ctrl_cwd.show_cwd()) == type([]) # тип возвращаемого значения list
     assert ctrl_cwd.show_cwd() == os.listdir() # содержание
@@ -83,8 +84,8 @@ def test_save_cwd_to_file():
         lines = f.readlines()
 
     assert len(lines) == 2 # numbers of lines in file
-    assert lines[0] == 'Files: newfile.txt\n' # first line
-    assert lines[1] == 'Dirs: '+new_folder  # second line
+    assert lines[0] == 'Dirs: '+new_folder+'\n'  # first line
+    assert lines[1] == 'Files: newfile.txt' # second line
     os.rmdir(new_folder)  # dir new_folder has been deleted
     os.remove('newfile.txt')
     os.remove('listdir.txt')
